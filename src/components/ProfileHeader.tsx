@@ -41,12 +41,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ selectedNode }) => {
         {/* Right: Stats above, Button below */}
         <div className="flex flex-col items-center justify-center gap-1 md:gap-2">
           <div className="flex items-center gap-1 md:gap-2 min-w-[120px] md:min-w-[180px]">
-            <span className="text-xs md:text-sm text-gray-700 font-medium">
-              Peers: <span className="text-blue-600 font-semibold">{(hcp.publications?.length || 0) + 220}</span>
+            <span className="text-xs md:text-sm text-gray-400 font-medium">
+              Peers: <span className="text-gray-700 font-semibold">{(hcp.publications?.length || 0) + 220}</span>
             </span>
             <span className="w-px h-3 md:h-4 bg-gray-300 inline-block" />
-            <span className="text-xs md:text-sm text-gray-700 font-medium">
-              Following: <span className="text-blue-600 font-semibold">{(hcp.experience?.length || 0) + 123}</span>
+            <span className="text-xs md:text-sm text-gray-400 font-medium">
+              Following: <span className="text-gray-700 font-semibold">{(hcp.experience?.length || 0) + 123}</span>
             </span>
           </div>
           <button className="px-2 md:px-4 py-1 rounded-lg md:rounded-xl bg-blue-600 text-white font-semibold text-xs md:text-sm shadow hover:bg-blue-700 transition self-end w-full">

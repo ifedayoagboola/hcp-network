@@ -45,7 +45,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedNode }) => {
         <div className="relative z-10 flex flex-col items-center mt-2">
           <h2 className="font-bold text-base md:text-lg text-gray-700 text-center">{hcp.name || 'Unknown HCP'}</h2>
           <div className="flex gap-1 md:gap-2 mt-1">
-            <TagBadge colorClass="text-blue-600">Cardiologist</TagBadge>
+            <TagBadge colorClass="text-gray-400">Cardiologist</TagBadge>
             <TagBadge colorClass="text-gray-400">SD, Spain</TagBadge>
           </div>
         </div>
