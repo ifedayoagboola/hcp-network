@@ -137,8 +137,8 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
         }}
         linkDirectionalArrowLength={0}
         linkDirectionalArrowRelPos={1}
-        linkWidth={2}
-        linkColor={() => '#2563eb'}
+        linkWidth={1.5}
+        linkColor={() => 'rgba(37, 99, 235, 0.4)'}
         cooldownTicks={20}
         cooldownTime={1000}
         d3AlphaDecay={0.3}
