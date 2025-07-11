@@ -1,0 +1,33 @@
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #1e40af;
+  --tertiary-color: #1e40af;
+  --quaternary-color: #1e40af;
+  --quinary-color: #1e40af;
+  --senary-color: #1e40af;
+  --septenary-color: #1e40af;
+  --octonary-color: #1e40af;
+  --nonary-color: #1e40af;
+}
+
+/* Custom scrollbar for InfoPanel and other scrollable areas */
+::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb; /* Tailwind gray-200 */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db; /* Tailwind gray-300 */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
