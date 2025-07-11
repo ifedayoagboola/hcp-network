@@ -32,11 +32,18 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedNode }) => {
         </div>
         {/* Profile avatar */}
         <div className="relative z-10 mt-15 mb-2">
-          <img src={hcp.avatarUrl} alt={`${hcp.name} profile photo`} className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover" />
+          <img 
+            src={hcp.avatarUrl} 
+            alt={`${hcp.name} profile photo`} 
+            className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
+            onError={(e) => {
+              e.currentTarget.src = 'https://randomuser.me/api/portraits/lego/1.jpg'; // Fallback avatar
+            }}
+          />
         </div>
         {/* Name and tags */}
         <div className="relative z-10 flex flex-col items-center mt-2">
-          <h2 className="font-bold text-lg text-gray-700">{hcp.name}</h2>
+          <h2 className="font-bold text-lg text-gray-700">{hcp.name || 'Unknown HCP'}</h2>
           <div className="flex gap-2 mt-1">
             <TagBadge colorClass="text-blue-600">Cardiologist</TagBadge>
             <TagBadge colorClass="text-gray-400">SD, Spain</TagBadge>
@@ -72,13 +79,13 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedNode }) => {
         <StatCard
           icon={<UserGroupIcon className="w-6 h-6 text-blue-500" />}
           label="Publications"
-          value={hcp.publications.length.toString()}
+          value={(hcp.publications?.length || 0).toString()}
           subtext="Research papers"
         />
         <StatCard
           icon={<CheckBadgeIcon className="w-6 h-6 text-green-500" />}
           label="Experience"
-          value={hcp.experience.length.toString()}
+          value={(hcp.experience?.length || 0).toString()}
           subtext="Workplaces"
         />
       </div>
@@ -89,58 +96,76 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedNode }) => {
         <p className="text-base text-gray-400 mt-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lectus risus, finibus ornare vestibulum at, feugiat qui dui. Vivamus sit amet dolor risus.</p>
       </section>
 
-      {/* Education Section */}
+              {/* Education Section */}
       <section className='my-8'>
         <h3 className="font-semibold text-gray-700 mb-1 text-lg">Education</h3>
-        {hcp.education.map((edu, index) => (
-          <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <span className="text-blue-500 text-2xl" aria-hidden="true">🎓</span>
+        {hcp.education && hcp.education.length > 0 ? (
+          hcp.education.map((edu, index) => (
+            <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-blue-500 text-2xl" aria-hidden="true">🎓</span>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-700 text-base">{edu}</div>
+                <div className="text-sm text-gray-500">Medical Degree</div>
+                <div className="text-sm text-gray-400">Specialization in Heart Health</div>
+                <div className="text-sm text-gray-300 mt-1">Sep2015–Jun 2020</div>
+              </div>
             </div>
-            <div>
-              <div className="font-semibold text-gray-700 text-base">{edu}</div>
-              <div className="text-sm text-gray-500">Medical Degree</div>
-              <div className="text-sm text-gray-400">Specialization in Heart Health</div>
-              <div className="text-sm text-gray-300 mt-1">Sep2015–Jun 2020</div>
-            </div>
+          ))
+        ) : (
+          <div className="bg-gray-50 rounded-xl p-4 text-center text-gray-500">
+            No education information available
           </div>
-        ))}
+        )}
       </section>
 
       {/* Experience Section */}
       <section className='my-8'>
         <h3 className="font-semibold text-gray-700 mb-1 text-lg">Experience</h3>
-        {hcp.experience.map((exp, index) => (
-          <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <span className="text-green-500 text-2xl" aria-hidden="true">🏥</span>
+        {hcp.experience && hcp.experience.length > 0 ? (
+          hcp.experience.map((exp, index) => (
+            <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <span className="text-green-500 text-2xl" aria-hidden="true">🏥</span>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-700 text-base">{exp}</div>
+                <div className="text-sm text-gray-500">Medical Practice</div>
+                <div className="text-sm text-gray-400">Healthcare Professional</div>
+                <div className="text-sm text-gray-300 mt-1">2020–Present</div>
+              </div>
             </div>
-            <div>
-              <div className="font-semibold text-gray-700 text-base">{exp}</div>
-              <div className="text-sm text-gray-500">Medical Practice</div>
-              <div className="text-sm text-gray-400">Healthcare Professional</div>
-              <div className="text-sm text-gray-300 mt-1">2020–Present</div>
-            </div>
+          ))
+        ) : (
+          <div className="bg-gray-50 rounded-xl p-4 text-center text-gray-500">
+            No experience information available
           </div>
-        ))}
+        )}
       </section>
 
       {/* Publications Section */}
       <section className='my-8'>
         <h3 className="font-semibold text-gray-700 mb-1 text-lg">Publications</h3>
-        {hcp.publications.map((pub, index) => (
-          <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <span className="text-purple-500 text-2xl" aria-hidden="true">📄</span>
+        {hcp.publications && hcp.publications.length > 0 ? (
+          hcp.publications.map((pub, index) => (
+            <div key={index} className="bg-gray-50 rounded-xl p-4 flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <span className="text-purple-500 text-2xl" aria-hidden="true">📄</span>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-700 text-base">{pub}</div>
+                <div className="text-sm text-gray-500">Research Publication</div>
+                <div className="text-sm text-gray-400">Peer-reviewed Journal</div>
+                <div className="text-sm text-gray-300 mt-1">2020–2022</div>
+              </div>
             </div>
-            <div>
-              <div className="font-semibold text-gray-700 text-base">{pub}</div>
-              <div className="text-sm text-gray-500">Research Publication</div>
-              <div className="text-sm text-gray-400">Peer-reviewed Journal</div>
-              <div className="text-sm text-gray-300 mt-1">2020–2022</div>
-            </div>
+          ))
+        ) : (
+          <div className="bg-gray-50 rounded-xl p-4 text-center text-gray-500">
+            No publications available
           </div>
-        ))}
+        )}
       </section>
       </div>
       </div>

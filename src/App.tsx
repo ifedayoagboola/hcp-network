@@ -14,7 +14,7 @@ import ProfileHeader from './components/ProfileHeader';
 function App() {
   const [search, setSearch] = useState('');
   const [centerNodeId, setCenterNodeId] = useState<string | null>('1'); // Default to Dr. Emily Carter
-  const [selectedNode, setSelectedNode] = useState<HCP | null>(mockGraph.nodes[0]); // Default to Dr. Emily Carter
+  const [selectedNode, setSelectedNode] = useState<HCP | null>(mockGraph.nodes[0] || null); // Default to Dr. Emily Carter
   const [searchError, setSearchError] = useState<string | null>(null);
   
   // Connection details state
@@ -33,7 +33,7 @@ function App() {
     setSearchError(null);
     
     // Search for HCP
-    const found = searchHCPByName(mockGraph.nodes, search);
+    const found = searchHCPByName(mockGraph?.nodes || [], search);
     setCenterNodeId(found ? found.id : null);
     setSelectedNode(found || null);
   };
@@ -88,8 +88,8 @@ function App() {
       {/* Connection Details Panel */}
       <ConnectionDetailsPanel 
         link={selectedLink}
-        sourceHcp={selectedLink ? mockGraph.nodes.find(n => n.id === selectedLink.source) || null : null}
-        targetHcp={selectedLink ? mockGraph.nodes.find(n => n.id === selectedLink.target) || null : null}
+        sourceHcp={selectedLink ? mockGraph?.nodes?.find(n => n.id === selectedLink.source) || null : null}
+        targetHcp={selectedLink ? mockGraph?.nodes?.find(n => n.id === selectedLink.target) || null : null}
         isOpen={isConnectionPanelOpen}
         onClose={closeConnectionPanel}
         position={connectionPanelPosition || undefined}

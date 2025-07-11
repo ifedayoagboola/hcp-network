@@ -39,21 +39,21 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
         return {
           title: 'Shared Workplace',
           icon: '🏥',
-          details: [
-            `${sourceHcp.experience[0]} (2020-2023)`,
-            'Collaborated on patient care protocols',
-            'Joint research initiatives'
-          ]
+                     details: [
+             `${sourceHcp.experience?.[0] || 'Unknown workplace'} (2020-2023)`,
+             'Collaborated on patient care protocols',
+             'Joint research initiatives'
+           ]
         };
       case 'education':
         return {
           title: 'Educational Connection',
           icon: '🎓',
-          details: [
-            `${sourceHcp.education[0]} (2015-2019)`,
-            'Same graduating class',
-            'Research collaboration during studies'
-          ]
+                     details: [
+             `${sourceHcp.education?.[0] || 'Unknown institution'} (2015-2019)`,
+             'Same graduating class',
+             'Research collaboration during studies'
+           ]
         };
       case 'research':
         return {
@@ -115,20 +115,26 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
               src={sourceHcp.avatarUrl}
               alt={sourceHcp.name}
               className="w-12 h-12 rounded-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = 'https://randomuser.me/api/portraits/lego/1.jpg';
+              }}
             />
             <div className="flex-1">
-              <div className="font-medium text-gray-900">{sourceHcp.name}</div>
-              <div className="text-sm text-gray-500">{sourceHcp.education[0]}</div>
+              <div className="font-medium text-gray-900">{sourceHcp.name || 'Unknown HCP'}</div>
+              <div className="text-sm text-gray-500">{sourceHcp.education?.[0] || 'No education info'}</div>
             </div>
             <div className="text-gray-300">→</div>
             <img
               src={targetHcp.avatarUrl}
               alt={targetHcp.name}
               className="w-12 h-12 rounded-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = 'https://randomuser.me/api/portraits/lego/1.jpg';
+              }}
             />
             <div className="flex-1">
-              <div className="font-medium text-gray-900">{targetHcp.name}</div>
-              <div className="text-sm text-gray-500">{targetHcp.education[0]}</div>
+              <div className="font-medium text-gray-900">{targetHcp.name || 'Unknown HCP'}</div>
+              <div className="text-sm text-gray-500">{targetHcp.education?.[0] || 'No education info'}</div>
             </div>
           </div>
 
@@ -136,7 +142,7 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
           <div className="space-y-4">
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Connection Details</h4>
-              <p className="text-gray-600 text-sm">{link.detail}</p>
+              <p className="text-gray-600 text-sm">{link.detail || 'No details available'}</p>
             </div>
 
             <div>

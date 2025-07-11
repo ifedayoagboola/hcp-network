@@ -41,7 +41,7 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
       const linkForce = fgRef.current.d3Force('link');
       if (linkForce) linkForce.distance(250);
       fgRef.current.d3ReheatSimulation();
-      const node = (mockGraph.nodes.find(n => n.id === '1') ?? {}) as HCPWithCoords;
+      const node = (mockGraph?.nodes?.find(n => n.id === '1') ?? {}) as HCPWithCoords;
       if (typeof node.x === 'number' && typeof node.y === 'number') {
         fgRef.current.centerAt(node.x, node.y, 1000);
       } else {
@@ -54,7 +54,7 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
   // Center the main node and spread web when centerNodeId changes
   useEffect(() => {
     if (centerNodeId && fgRef.current) {
-      const node = (mockGraph.nodes.find(n => n.id === centerNodeId) ?? {}) as HCPWithCoords;
+      const node = (mockGraph?.nodes?.find(n => n.id === centerNodeId) ?? {}) as HCPWithCoords;
       if (typeof node.x === 'number' && typeof node.y === 'number') {
         fgRef.current.d3Force('center', forceCenter(dimensions.width / 2, dimensions.height / 2));
         fgRef.current.d3Force('collide', forceCollide(40));
@@ -85,7 +85,7 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
     <div ref={containerRef} className="w-full h-full min-h-0 bg-white rounded-2xl shadow-base overflow-hidden">
       <ForceGraph2D
         ref={fgRef}
-        graphData={mockGraph}
+        graphData={mockGraph || { nodes: [], links: [] }}
         nodeId="id"
         nodeAutoColorBy={d => d.id === centerNodeId ? 'highlight' : 'normal'}
         nodeLabel="name"
@@ -101,17 +101,34 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
         enableZoomInteraction
         enablePanInteraction
         nodeCanvasObject={(node, ctx) => {
+          if (!node.avatarUrl) return; // Skip if no avatar URL
+          
           const img = new window.Image();
           img.src = node.avatarUrl;
           const size = node.id === centerNodeId ? 96 : 72;
           const { x = 0, y = 0 } = node;
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
-          ctx.closePath();
-          ctx.clip();
-          ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
-          ctx.restore();
+          
+          // Handle image loading errors
+          img.onerror = () => {
+            // Draw a placeholder circle if image fails to load
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
+            ctx.fillStyle = '#e5e7eb';
+            ctx.fill();
+            ctx.restore();
+          };
+          
+          img.onload = () => {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+            ctx.restore();
+          };
+          
           ctx.beginPath();
           ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
           ctx.lineWidth = node.id === centerNodeId ? 8 : 3;
