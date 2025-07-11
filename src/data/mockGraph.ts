@@ -593,19 +593,7 @@ const mockGraph: GraphData = {
     { source: '56', target: '58', type: 'Co-authored', detail: 'Clinical research' },
     { source: '59', target: '60', type: 'Worked together', detail: 'Healthcare partnership' },
     // Bridge connections to ensure complete connectivity
-    // { source: '13', target: '16', type: 'Co-authored', detail: 'Cross-institutional research' },
-    // { source: '14', target: '17', type: 'Worked together', detail: 'Regional collaboration' },
-    // { source: '18', target: '21', type: 'Mentored', detail: 'Academic partnership' },
-    // { source: '22', target: '25', type: 'Co-authored', detail: 'Research initiative' },
-    // { source: '26', target: '29', type: 'Shared workplace', detail: 'Healthcare system' },
-    // { source: '30', target: '33', type: 'Worked together', detail: 'Medical partnership' },
-    // { source: '34', target: '37', type: 'Co-authored', detail: 'Clinical collaboration' },
-    // { source: '38', target: '41', type: 'Mentored', detail: 'Training program' },
-    // { source: '42', target: '45', type: 'Shared workplace', detail: 'Healthcare network' },
-    // { source: '46', target: '49', type: 'Co-authored', detail: 'Research partnership' },
-    // { source: '50', target: '53', type: 'Worked together', detail: 'Medical collaboration' },
-    // { source: '54', target: '57', type: 'Mentored', detail: 'Education initiative' },
-    // { source: '58', target: '60', type: 'Co-authored', detail: 'Clinical studies' },
+
   ]
 };
 

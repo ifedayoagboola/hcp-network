@@ -67,7 +67,7 @@ function App() {
 
   return (
     <Layout>
-      <div className="flex flex-col gap-4 w-full flex-1 min-h-0">
+      <div className="flex flex-col gap-4 w-full lg:flex-1 lg:min-h-0 lg:overflow-hidden overflow-y-auto">
         <ProfileHeader selectedNode={selectedNode} />
         <SearchFilterBar value={search} onChange={setSearch} onSubmit={handleSearch} />
         {searchError && (

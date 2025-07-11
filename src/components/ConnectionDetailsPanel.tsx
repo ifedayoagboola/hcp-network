@@ -81,77 +81,77 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
   const connectionInfo = getConnectionDetails();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 md:p-4">
       <div 
-        className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[80vh] overflow-hidden"
+        className="bg-white rounded-xl md:rounded-2xl shadow-xl max-w-sm md:max-w-md w-full max-h-[90vh] md:max-h-[80vh] overflow-hidden"
         style={{
           position: 'absolute',
-          left: position ? Math.min(position.x, window.innerWidth - 400) : '50%',
-          top: position ? Math.min(position.y, window.innerHeight - 300) : '50%',
+          left: position ? Math.min(position.x, window.innerWidth - 320) : '50%',
+          top: position ? Math.min(position.y, window.innerHeight - 400) : '50%',
           transform: position ? 'none' : 'translate(-50%, -50%)'
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
-            <span className="text-2xl">{connectionInfo.icon}</span>
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100">
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <span className="text-xl md:text-2xl">{connectionInfo.icon}</span>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{connectionInfo.title}</h3>
-              <p className="text-sm text-gray-500">{link.type.replace('_', ' ')}</p>
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">{connectionInfo.title}</h3>
+              <p className="text-xs md:text-sm text-gray-500">{link.type.replace('_', ' ')}</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <XMarkIcon className="h-6 w-6" />
+            <XMarkIcon className="h-5 w-5 md:h-6 md:w-6" />
           </button>
         </div>
 
         {/* Connection Info */}
-        <div className="p-6">
-          <div className="flex items-center space-x-4 mb-6">
+        <div className="p-4 md:p-6">
+          <div className="flex items-center space-x-2 md:space-x-4 mb-4 md:mb-6">
             <img
               src={sourceHcp.avatarUrl}
               alt={sourceHcp.name}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-8 h-8 md:w-12 md:h-12 rounded-full object-cover"
               onError={(e) => {
                 e.currentTarget.src = 'https://randomuser.me/api/portraits/lego/1.jpg';
               }}
             />
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">{sourceHcp.name || 'Unknown HCP'}</div>
-              <div className="text-sm text-gray-500">{sourceHcp.education?.[0] || 'No education info'}</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-medium text-gray-900 text-sm md:text-base truncate">{sourceHcp.name || 'Unknown HCP'}</div>
+              <div className="text-xs md:text-sm text-gray-500 truncate">{sourceHcp.education?.[0] || 'No education info'}</div>
             </div>
-            <div className="text-gray-300">→</div>
+            <div className="text-gray-300 text-sm md:text-base">→</div>
             <img
               src={targetHcp.avatarUrl}
               alt={targetHcp.name}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-8 h-8 md:w-12 md:h-12 rounded-full object-cover"
               onError={(e) => {
                 e.currentTarget.src = 'https://randomuser.me/api/portraits/lego/1.jpg';
               }}
             />
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">{targetHcp.name || 'Unknown HCP'}</div>
-              <div className="text-sm text-gray-500">{targetHcp.education?.[0] || 'No education info'}</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-medium text-gray-900 text-sm md:text-base truncate">{targetHcp.name || 'Unknown HCP'}</div>
+              <div className="text-xs md:text-sm text-gray-500 truncate">{targetHcp.education?.[0] || 'No education info'}</div>
             </div>
           </div>
 
           {/* Connection Details */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Connection Details</h4>
-              <p className="text-gray-600 text-sm">{link.detail || 'No details available'}</p>
+              <h4 className="font-medium text-gray-900 mb-1 md:mb-2 text-sm md:text-base">Connection Details</h4>
+              <p className="text-gray-600 text-xs md:text-sm">{link.detail || 'No details available'}</p>
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Collaborations</h4>
-              <ul className="space-y-2">
+              <h4 className="font-medium text-gray-900 mb-1 md:mb-2 text-sm md:text-base">Collaborations</h4>
+              <ul className="space-y-1 md:space-y-2">
                 {connectionInfo.details.map((detail, index) => (
                   <li key={index} className="flex items-start space-x-2">
                     <span className="text-blue-500 mt-1">•</span>
-                    <span className="text-sm text-gray-600">{detail}</span>
+                    <span className="text-xs md:text-sm text-gray-600">{detail}</span>
                   </li>
                 ))}
               </ul>
@@ -159,19 +159,19 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
 
             {/* Timeline */}
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Timeline</h4>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-3">
+              <h4 className="font-medium text-gray-900 mb-1 md:mb-2 text-sm md:text-base">Timeline</h4>
+              <div className="space-y-1 md:space-y-2">
+                <div className="flex items-center space-x-2 md:space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">2023: Current collaboration</span>
+                  <span className="text-xs md:text-sm text-gray-600">2023: Current collaboration</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 md:space-x-3">
                   <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                  <span className="text-sm text-gray-600">2022: Research partnership</span>
+                  <span className="text-xs md:text-sm text-gray-600">2022: Research partnership</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 md:space-x-3">
                   <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                  <span className="text-sm text-gray-600">2021: Initial connection</span>
+                  <span className="text-xs md:text-sm text-gray-600">2021: Initial connection</span>
                 </div>
               </div>
             </div>
@@ -179,10 +179,10 @@ const ConnectionDetailsPanel: React.FC<ConnectionDetailsPanelProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <div className="px-4 md:px-6 py-3 md:py-4 bg-gray-50 border-t border-gray-100">
           <button
             onClick={onClose}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-colors"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg md:rounded-xl hover:bg-blue-700 transition-colors text-sm md:text-base"
           >
             Close
           </button>
