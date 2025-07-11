@@ -24,14 +24,16 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({ value, onChange, onSu
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder="Search"
-          className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          aria-label="Search HCP by name"
+          className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
         />
       </div>
       {/* Filter Button */}
       <button
         type="button"
-        className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 text-gray-400 text-sm font-medium hover:bg-gray-100 transition min-w-[44px]"
+        className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 text-gray-400 text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition min-w-[44px]"
         aria-label="Filter options"
+        aria-expanded="false"
       >
         {/* Mobile: Only icon */}
         <span className="block md:hidden">

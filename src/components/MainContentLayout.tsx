@@ -13,8 +13,8 @@ const MainContentLayout: React.FC<{
           {left}
         </aside>
         {/* Right Panel */}
-        <main className="flex-1 min-h-0 h-full w-full lg:w-3/5 flex flex-col">
-          {/* {right} */}
+        <main className="flex-1 min-h-0 h-full w-full lg:w-3/5 flex flex-col bg-white rounded-2xl shadow-base overflow-hidden">
+          {right}
         </main>
       </div>
     </>

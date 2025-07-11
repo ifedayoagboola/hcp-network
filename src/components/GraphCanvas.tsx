@@ -1,12 +1,16 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import type { ForceGraphMethods } from 'react-force-graph-2d';
+import mockGraph from '../data/mockGraph';
 
 // Node and Link types for the graph
 interface HCPNode {
   id: string;
   name: string;
-  avatar: string;
+  avatarUrl: string;
+  education: string[];
+  experience: string[];
+  publications: string[];
   main?: boolean;
   x?: number;
   y?: number;
@@ -14,38 +18,41 @@ interface HCPNode {
 interface HCPLink {
   source: string;
   target: string;
-  label: string;
+  type: string;
+  detail: string;
 }
 
 interface GraphCanvasProps {
   centerNodeId?: string | null;
+  onNodeClick?: (node: HCPNode) => void;
+  onNodeHover?: (node: HCPNode | null) => void;
+  onLinkHover?: (link: HCPLink | null) => void;
+  onLinkClick?: (link: HCPLink, position: { x: number; y: number }) => void;
 }
 
-// Mock data for demonstration
-const mockData = {
-  nodes: [
-    { id: '1', name: 'Dr. Emily Carter', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', main: true },
-    { id: '2', name: 'Dr. John Smith', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-    { id: '3', name: 'Dr. Alice Brown', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
-    { id: '4', name: 'Dr. Bob Lee', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-    { id: '5', name: 'Dr. Carol White', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
-  ],
-  links: [
-    { source: '1', target: '2', label: 'Co-authored' },
-    { source: '1', target: '3', label: 'Worked together' },
-    { source: '2', target: '4', label: 'Co-authored' },
-    { source: '3', target: '5', label: 'Mentored' },
-    { source: '1', target: '5', label: 'Shared workplace' },
-  ]
-};
-
-const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId }) => {
+const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, onNodeHover, onLinkHover, onLinkClick }) => {
   const fgRef = useRef<ForceGraphMethods<HCPNode, HCPLink> | undefined>(undefined);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+
+  // Update dimensions when container size changes
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setDimensions({ width: rect.width, height: rect.height });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   // Center the main node on mount or when centerNodeId changes
   useEffect(() => {
     if (centerNodeId && fgRef.current) {
-      const node = mockData.nodes.find(n => n.id === centerNodeId) as HCPNode | undefined;
+      const node = mockGraph.nodes.find(n => n.id === centerNodeId) as HCPNode | undefined;
       const x = typeof node?.x === 'number' ? node.x : 0;
       const y = typeof node?.y === 'number' ? node.y : 0;
       if (node) {
@@ -55,21 +62,53 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId }) => {
     }
   }, [centerNodeId]);
 
+  const handleNodeClick = (node: HCPNode) => {
+    if (onNodeClick) {
+      onNodeClick(node);
+    }
+  };
+
+  const handleNodeHover = (node: HCPNode | null) => {
+    if (onNodeHover) {
+      onNodeHover(node);
+    }
+  };
+
+  const handleLinkHover = (link: HCPLink | null) => {
+    if (onLinkHover) {
+      onLinkHover(link);
+    }
+  };
+
+  const handleLinkClick = (link: HCPLink, event: MouseEvent) => {
+    if (onLinkClick) {
+      onLinkClick(link, { x: event.clientX, y: event.clientY });
+    }
+  };
+
   return (
-    <div className="w-full h-full">
+    <div ref={containerRef} className="w-full h-full min-h-0 bg-white rounded-2xl shadow-base overflow-hidden">
       <ForceGraph2D
         ref={fgRef}
-        graphData={mockData}
+        graphData={mockGraph}
         nodeId="id"
+        nodeAutoColorBy={d => d.id === centerNodeId ? 'highlight' : 'normal'}
         nodeLabel="name"
-        linkLabel="label"
-        width={undefined}
-        height={undefined}
+        linkLabel={link => `${link.type}: ${link.detail}`}
+        width={dimensions.width}
+        height={dimensions.height}
         backgroundColor="rgba(0,0,0,0)"
+        onNodeClick={handleNodeClick}
+        onNodeHover={handleNodeHover}
+        onLinkHover={handleLinkHover}
+        onLinkClick={handleLinkClick}
+        enableNodeDrag={true}
+        enableZoomInteraction={true}
+        enablePanInteraction={true}
         nodeCanvasObject={(node, ctx) => {
           const img = new window.Image();
-          img.src = node.avatar;
-          const size = node.id === centerNodeId ? 56 : node.main ? 48 : 32;
+          img.src = node.avatarUrl;
+          const size = node.id === centerNodeId ? 56 : node.id === '1' ? 48 : 32;
           const x = typeof (node as HCPNode).x === 'number' ? (node as HCPNode).x : 0;
           const y = typeof (node as HCPNode).y === 'number' ? (node as HCPNode).y : 0;
           // Ensure x and y are numbers
@@ -85,14 +124,18 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId }) => {
           // Border
           ctx.beginPath();
           ctx.arc(safeX, safeY, size / 2, 0, 2 * Math.PI, false);
-          ctx.lineWidth = node.id === centerNodeId ? 6 : node.main ? 4 : 2;
-          ctx.strokeStyle = node.id === centerNodeId ? '#1d4ed8' : node.main ? '#2563eb' : '#d1d5db';
+          ctx.lineWidth = node.id === centerNodeId ? 6 : node.id === '1' ? 4 : 2;
+          ctx.strokeStyle = node.id === centerNodeId ? '#1d4ed8' : node.id === '1' ? '#2563eb' : '#d1d5db';
           ctx.stroke();
         }}
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
         linkWidth={1.5}
         linkColor={() => '#a5b4fc'}
+        cooldownTicks={100}
+        cooldownTime={15000}
+        d3AlphaDecay={0.02}
+        d3VelocityDecay={0.1}
       />
     </div>
   );
