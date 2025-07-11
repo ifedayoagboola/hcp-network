@@ -28,7 +28,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ selectedNode }) => {
         {/* Map background placeholder with border */}
         <div className="absolute inset-0 top-0 left-0 h-32 w-full bg-blue-50 rounded-t-2xl border border-gray-200 flex items-center justify-center z-0">
           {/* Replace with map/avatars as needed */}
-          <span className="text-blue-200 text-6xl" aria-hidden="true">🗺️</span>
+          {/* <span className="text-blue-200 text-6xl" aria-hidden="true">🗺️</span> */}
         </div>
         {/* Profile avatar */}
         <div className="relative z-10 mt-15 mb-2">

@@ -1,41 +1,25 @@
 import React, { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
-import type { ForceGraphMethods } from 'react-force-graph-2d';
+import type { ForceGraphMethods, NodeObject, LinkObject } from 'react-force-graph-2d';
+import { forceCenter, forceCollide, forceManyBody } from 'd3-force';
 import mockGraph from '../data/mockGraph';
-
-// Node and Link types for the graph
-interface HCPNode {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  education: string[];
-  experience: string[];
-  publications: string[];
-  main?: boolean;
-  x?: number;
-  y?: number;
-}
-interface HCPLink {
-  source: string;
-  target: string;
-  type: string;
-  detail: string;
-}
+import type { HCP, Link } from '../data/mockGraph';
 
 interface GraphCanvasProps {
   centerNodeId?: string | null;
-  onNodeClick?: (node: HCPNode) => void;
-  onNodeHover?: (node: HCPNode | null) => void;
-  onLinkHover?: (link: HCPLink | null) => void;
-  onLinkClick?: (link: HCPLink, position: { x: number; y: number }) => void;
+  onNodeClick?: (node: HCP) => void;
+  onNodeHover?: (node: HCP | null) => void;
+  onLinkHover?: (link: Link | null) => void;
+  onLinkClick?: (link: Link, position: { x: number; y: number }) => void;
 }
 
+type HCPWithCoords = HCP & { x?: number; y?: number };
+
 const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, onNodeHover, onLinkHover, onLinkClick }) => {
-  const fgRef = useRef<ForceGraphMethods<HCPNode, HCPLink> | undefined>(undefined);
+  const fgRef = useRef<ForceGraphMethods<NodeObject<HCPWithCoords>, LinkObject<HCPWithCoords, Link>> | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Update dimensions when container size changes
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -43,47 +27,58 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
         setDimensions({ width: rect.width, height: rect.height });
       }
     };
-
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Center the main node on mount or when centerNodeId changes
+  // Set default zoom and spread web on initial mount
+  useEffect(() => {
+    if (fgRef.current) {
+      fgRef.current.d3Force('center', forceCenter(dimensions.width / 2, dimensions.height / 2));
+      fgRef.current.d3Force('collide', forceCollide(40));
+      fgRef.current.d3Force('charge', forceManyBody().strength(-800));
+      const linkForce = fgRef.current.d3Force('link');
+      if (linkForce) linkForce.distance(250);
+      fgRef.current.d3ReheatSimulation();
+      const node = (mockGraph.nodes.find(n => n.id === '1') ?? {}) as HCPWithCoords;
+      if (typeof node.x === 'number' && typeof node.y === 'number') {
+        fgRef.current.centerAt(node.x, node.y, 1000);
+      } else {
+        fgRef.current.centerAt(dimensions.width / 2, dimensions.height / 2, 1000);
+      }
+      fgRef.current.zoom(1, 1000);
+    }
+  }, [dimensions.width, dimensions.height]);
+
+  // Center the main node and spread web when centerNodeId changes
   useEffect(() => {
     if (centerNodeId && fgRef.current) {
-      const node = mockGraph.nodes.find(n => n.id === centerNodeId) as HCPNode | undefined;
-      const x = typeof node?.x === 'number' ? node.x : 0;
-      const y = typeof node?.y === 'number' ? node.y : 0;
-      if (node) {
-        fgRef.current.centerAt(x, y, 1000);
-        fgRef.current.zoom(2, 1000);
+      const node = (mockGraph.nodes.find(n => n.id === centerNodeId) ?? {}) as HCPWithCoords;
+      if (typeof node.x === 'number' && typeof node.y === 'number') {
+        fgRef.current.d3Force('center', forceCenter(dimensions.width / 2, dimensions.height / 2));
+        fgRef.current.d3Force('collide', forceCollide(40));
+        fgRef.current.d3Force('charge', forceManyBody().strength(-800));
+        const linkForce = fgRef.current.d3Force('link');
+        if (linkForce) linkForce.distance(250);
+        fgRef.current.d3ReheatSimulation();
+        fgRef.current.centerAt(node.x, node.y, 1000);
+        fgRef.current.zoom(1, 1000);
       }
     }
-  }, [centerNodeId]);
+  }, [centerNodeId, dimensions.width, dimensions.height]);
 
-  const handleNodeClick = (node: HCPNode) => {
-    if (onNodeClick) {
-      onNodeClick(node);
-    }
+  const handleNodeClick = (node: HCPWithCoords) => {
+    onNodeClick?.(node);
   };
-
-  const handleNodeHover = (node: HCPNode | null) => {
-    if (onNodeHover) {
-      onNodeHover(node);
-    }
+  const handleNodeHover = (node: HCPWithCoords | null) => {
+    onNodeHover?.(node);
   };
-
-  const handleLinkHover = (link: HCPLink | null) => {
-    if (onLinkHover) {
-      onLinkHover(link);
-    }
+  const handleLinkHover = (link: Link | null) => {
+    onLinkHover?.(link);
   };
-
-  const handleLinkClick = (link: HCPLink, event: MouseEvent) => {
-    if (onLinkClick) {
-      onLinkClick(link, { x: event.clientX, y: event.clientY });
-    }
+  const handleLinkClick = (link: Link, event: MouseEvent) => {
+    onLinkClick?.(link, { x: event.clientX, y: event.clientY });
   };
 
   return (
@@ -102,40 +97,35 @@ const GraphCanvas: React.FC<GraphCanvasProps> = ({ centerNodeId, onNodeClick, on
         onNodeHover={handleNodeHover}
         onLinkHover={handleLinkHover}
         onLinkClick={handleLinkClick}
-        enableNodeDrag={true}
-        enableZoomInteraction={true}
-        enablePanInteraction={true}
+        enableNodeDrag
+        enableZoomInteraction
+        enablePanInteraction
         nodeCanvasObject={(node, ctx) => {
           const img = new window.Image();
           img.src = node.avatarUrl;
-          const size = node.id === centerNodeId ? 56 : node.id === '1' ? 48 : 32;
-          const x = typeof (node as HCPNode).x === 'number' ? (node as HCPNode).x : 0;
-          const y = typeof (node as HCPNode).y === 'number' ? (node as HCPNode).y : 0;
-          // Ensure x and y are numbers
-          const safeX = typeof x === 'number' ? x : 0;
-          const safeY = typeof y === 'number' ? y : 0;
+          const size = node.id === centerNodeId ? 96 : 72;
+          const { x = 0, y = 0 } = node;
           ctx.save();
           ctx.beginPath();
-          ctx.arc(safeX, safeY, size / 2, 0, 2 * Math.PI, false);
+          ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
           ctx.closePath();
           ctx.clip();
-          ctx.drawImage(img, safeX - size / 2, safeY - size / 2, size, size);
+          ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
           ctx.restore();
-          // Border
           ctx.beginPath();
-          ctx.arc(safeX, safeY, size / 2, 0, 2 * Math.PI, false);
-          ctx.lineWidth = node.id === centerNodeId ? 6 : node.id === '1' ? 4 : 2;
-          ctx.strokeStyle = node.id === centerNodeId ? '#1d4ed8' : node.id === '1' ? '#2563eb' : '#d1d5db';
+          ctx.arc(x, y, size / 2, 0, 2 * Math.PI, false);
+          ctx.lineWidth = node.id === centerNodeId ? 8 : 3;
+          ctx.strokeStyle = node.id === centerNodeId ? '#2563eb' : '#d1d5db';
           ctx.stroke();
         }}
-        linkDirectionalArrowLength={6}
+        linkDirectionalArrowLength={0}
         linkDirectionalArrowRelPos={1}
-        linkWidth={1.5}
-        linkColor={() => '#a5b4fc'}
-        cooldownTicks={100}
-        cooldownTime={15000}
-        d3AlphaDecay={0.02}
-        d3VelocityDecay={0.1}
+        linkWidth={2}
+        linkColor={() => '#2563eb'}
+        cooldownTicks={20}
+        cooldownTime={1000}
+        d3AlphaDecay={0.3}
+        d3VelocityDecay={0.5}
       />
     </div>
   );
