@@ -11,8 +11,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ selectedNode }) => {
   const [showMap, setShowMap] = useState(false);
   const hcp = selectedNode || {
     id: '1',
-    name: 'Emily Carter',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
+    name: 'Dr. Emily Carter',
+    avatarUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     education: ['Harvard Medical School', 'Cardiology Residency'],
     experience: ['HMO Hospital', 'Cardiology Clinic'],
     publications: ['Heart Health 2020', 'Cardio Advances 2022'],
